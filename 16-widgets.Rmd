@@ -1,6 +1,8 @@
-# HTML Widgets
+# HTML Widgets HTML小组件
 
 We briefly mentioned HTML widgets\index{HTML widgets} in the beginning of this book in Section \@ref(intro-widgets). The **htmlwidgets** package [@R-htmlwidgets] provides a framework for creating R bindings to JavaScript libraries. HTML Widgets can be:
+
+在本书前面的章节里 \@ref(intro-widgets)，我们已经简单介绍了 HTML组件 \index{HTML widgets}。**htmlwidgets** 包提供了一个将 R 与 Javascript 绑定的框架。HTML组件可以：
 
 - Used at the R console for data analysis just like conventional R plots.
 
@@ -10,11 +12,29 @@ We briefly mentioned HTML widgets\index{HTML widgets} in the beginning of this b
 
 - Saved as standalone web pages for ad-hoc sharing via Email and Dropbox, etc.
 
+- 在R终端中像常规的R绘图一样用于数据分析；
+
+- 植入 R Markdown 文档中；^[注意：仅输出格式为 HTML 时才有交互效果。当输出不是 HTML 时，仅可以展示静态快照。参见 \@ref(intro-widgets)。]
+
+- 可以编入 Shiny 网页应用；
+
+- 保存为独立页面时，可通过 Email 和 Dropbox 分享。
+
 There have been many R packages developed based on the HTML widgets framework, to make it easy for R users to create JavaScript applications using pure R syntax and data. It is not possible to introduce all these R packages in this chapter. Readers should read the documentation of specific widget packages for the usage. This chapter is mainly for developers who want to bring more JavaScript libraries into R, and it requires reasonable familiarity with the JavaScript language.
 
-## Overview {#htmlwidgets-overview}
+目前已经有很多 R 包基于 HTML 组件框架开发，方便 R 用户使用R语言和数据创建 Javascript 应用。对此，本书难以做到面面俱到。用户需要阅读相应包的文档来了解具体用法。本章的内容主要面向意欲在R语言中支持更多的 Javascript 库的开发者，需要对 Javascript 有一定的了解。
+
+## Overview 概述 {#htmlwidgets-overview}
 
 By following a small set of conventions, it is possible to create HTML widgets with very little code. All widgets include the following components:
+
+只需要做一小点转换工作，就可以用很少的代码创建 HTML 小组件。所有的组件都包括以下几个部分：
+
+1. **依赖**：包括组件需要用到的 Javascript 和 CSS 配置文件（如 Javascript 库文件）。
+
+2. **R绑定**：这是终端用户使用的 R 函数，用来向组件提供输入数据、配置参数，是组件可以被渲染出来。除此之外，还可能包括小组件用在 Shiny APP 时所必须的简短样本函数。
+
+3. **Javascript绑定**：用来将所有材料拼接在一起的 Javascript \index{JavaScript}，将 R 提供的数据和参数传递到 Javascript 库中。
 
 1. **Dependencies**. These are the JavaScript and CSS assets used by the widget (e.g., the library for which you are creating a wrapper).
 
@@ -22,9 +42,14 @@ By following a small set of conventions, it is possible to create HTML widgets w
 
 3. **JavaScript binding**. This is the JavaScript\index{JavaScript} code that glues everything together, passing the data and options gathered in the R binding to the underlying JavaScript library.
 
+HTML 组件总是在 R 包中存在，必须包括所有依赖的源代码。只有这样才能保证 R 在渲染组件的时候可以重复（不需要网络连接和连接服务器）。
+
 HTML widgets are always hosted within an R package, and should include all of the source code for their dependencies. This is to ensure that R code that renders widgets is fully reproducible (i.e., it does not require an Internet connection or the ongoing availability of an Internet service to run).
 
-## A widget example (sigma.js) {#htmlwidgets-sigma}
+
+## A widget example 一个组件的示例 (sigma.js) {#htmlwidgets-sigma}
+
+
 
 To start with, we will walk through the creation of a simple widget that wraps the [sigma.js](http://sigmajs.org) graph visualization library. When we are done, we will be able to use it to display interactive visualizations of [GEXF](http://gexf.net) (Graph Exchange XML Format) data files. For example (see Figure \@ref(fig:sigma) for the output, which is interactive if you are reading the HTML version of this book):
 
