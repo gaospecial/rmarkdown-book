@@ -216,6 +216,7 @@ Table: (\#tab:df-print) The possible values of the `df_print` option for the `ht
 | kable  | Use the `knitr::kable` function |
 | tibble  | Use the `tibble::print.tbl_df` function |
 | paged  |  Use `rmarkdown::paged_table` to create a pageable table |
+| A custom function | Use the function to create the table |
 
 #### Paged printing
 
@@ -256,6 +257,37 @@ These options are specified in each chunk like below:
 
 ````markdown
 `r ''````{r cols.print=3, rows.print=3}
+mtcars
+```
+````
+
+#### Custom function {#custom-fun-dfprint}
+
+The `df_print` option can also take an arbitrary function to create the table in the output document. This function must output in the correct format according to the output used.
+
+For example, 
+
+```r
+rmarkdown::html_document(df_print = knitr::kable)
+```
+
+is the equivalent to using the method `"kable"`
+
+```r
+rmarkdown::html_document(df_print = "kable")
+```
+
+To use a custom function in `df_print` within the YAML header, the tag `!expr` must be used so the R expression after it will be evaluated. See the `eval.expr` argument on the help page `?yaml::yaml.load` for details.
+
+````markdown
+---
+title: "Motor Trend Car Road Tests"
+output:
+  html_document:
+    df_print: !expr pander::pander 
+---
+
+`r ''````{r}
 mtcars
 ```
 ````
@@ -779,7 +811,7 @@ output:
 ---
 ```
 
-If the TOC depth is not explicitly specified, it defaults to 3 (meaning that all level 1, 2, and 3 headers will be included in the TOC).
+If the TOC depth is not explicitly specified, it defaults to 2 (meaning that all level 1 and 2 headers will be included in the TOC), while it defaults to 3 in `html_document`.
 
 You can add section numbering to headers using the `number_sections` option:
 
@@ -799,7 +831,7 @@ If you are familiar with LaTeX, `number_sections: true` means `\section{}`, and 
 
 There are a number of options that affect the output of figures within PDF documents:
 
-- `fig_width` and `fig_height` can be used to control the default figure width and height (6x4.5 is used by default).
+- `fig_width` and `fig_height` can be used to control the default figure width and height (6.5x4.5 is used by default).
 
 - `fig_crop` controls whether the `pdfcrop` utility, if available in your system, is automatically applied to PDF figures (this is `true` by default).
 
@@ -807,7 +839,7 @@ There are a number of options that affect the output of figures within PDF docum
 
     - If your graphics device is `postscript`, we recommend that you disable this feature (see more info in the **knitr** issue [#1365](https://github.com/yihui/knitr/issues/1365)).
 
-- `fig_caption` controls whether figures are rendered with captions (this is `false` by default).
+- `fig_caption` controls whether figures are rendered with captions (this is `true` by default).
 
 - `dev` controls the graphics device used to render figures (defaults to `pdf`).
 
@@ -835,6 +867,7 @@ Table: (\#tab:df-print-pdf) The possible values of the `df_print` option for the
 | default  | Call the `print.data.frame` generic method |
 | kable  | Use the `knitr::kable()` function |
 | tibble  | Use the `tibble::print.tbl_df()` function |
+| A custom function | Use the function to create the table. See \@ref(custom-fun-dfprint) |
 
 For example:
 
@@ -873,7 +906,7 @@ geometry: margin=1in
 ---
 ```
 
-A few available metadata variables are displayed in Table \@ref(tab:latex-vars) (consult the Pandoc manual for the full list):
+A few available metadata variables are displayed in Table \@ref(tab:latex-vars) (consult the Pandoc manual for [the full list](https://pandoc.org/MANUAL.html#variables-for-latex)):
 
 Table: (\#tab:latex-vars) Available top-level YAML metadata variables for LaTeX output.
 
