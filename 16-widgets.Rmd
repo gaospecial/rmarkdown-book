@@ -126,7 +126,13 @@ sigma = function(
 }
 ```
 
+
+这个函数接受数据、参数设置，并将所有信息传递给 `htmlwidgets::createWidget()` 函数。
+
+
 The function takes two classes of input: the GEXF data file to render, and some additional settings that control how it is rendered. This input is collected into a list named `x`, which is then passed on to the `htmlwidgets::createWidget()` function. This `x` variable will subsequently be made available to the JavaScript binding for `sigma` (to be described in the next section). Any width or height parameter specified is also forwarded to the widget (widgets size themselves automatically by default, so typically do not require an explicit width or height).
+
+我们还希望能够在 Shiny 应用程序中使用，因此添加了 Shiny 输出和渲染的样板文件。
 
 We want our sigma widget to also work in Shiny applications, so we add the following boilerplate Shiny output and render functions (these are always the same for all widgets):
 
@@ -147,6 +153,8 @@ renderSigma = function(expr, env = parent.frame(), quoted = FALSE) {
 ```
 
 ### JavaScript binding
+
+第三块的内容是将数据与 Javascript 连接起来。
 
 The third piece in the puzzle is the JavaScript required to activate the widget. By convention, we will define our JavaScript binding in the file `inst/htmlwidgets/sigma.js`. Here is the full source code of the binding:
 
